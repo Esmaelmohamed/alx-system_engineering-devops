@@ -1,1 +1,1 @@
-Readme file for linux Commands 
+Shell, permissions
