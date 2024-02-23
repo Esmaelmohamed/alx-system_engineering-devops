@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Stop the 7-highlander process
+# This Bash script stops the "7-highlander" process using pkill.
+# Created by Esmael Mohamed
+# Check if the process is running
+if pgrep -f "7-highlander" > /dev/null; then
+    # Use pkill to stop the process
+    pkill -f "7-highlander"
+    echo "Process 7-highlander has been stopped."
+else
+    echo "Process 7-highlander is not running."
+fi
+
