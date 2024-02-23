@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Display "To infinity and beyond" indefinitely with a sleep in between
+# This Bash script displays the message "To infinity and beyond" indefinitely,
+# with a sleep of 2 seconds in between each iteration.
+# Created by Esmael Mohamed
+# Infinite loop
+while true; do
+    echo "To infinity and beyond"
+    sleep 2
+done
+
