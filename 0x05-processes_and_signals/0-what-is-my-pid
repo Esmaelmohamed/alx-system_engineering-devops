@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# This is a Bash script to display its own Process ID (PID).
+# The PID of a script can be obtained using the special variable $$.
+
+# Echo statement to display a message along with the PID of the script
+echo "The PID of this script is: $$"
+
