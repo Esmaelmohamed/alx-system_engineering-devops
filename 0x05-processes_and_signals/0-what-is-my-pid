@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-
 # Display PID Script
 # This Bash script displays its own Process ID (PID).
 # Created by Asmael Mohamed
-
 # Echo statement to display a message along with the PID of the script
 echo "The PID of this script is: $$"
 
