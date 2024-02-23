@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Display Bash process PID
+# This Bash script displays lines containing the word 'bash' from the list of currently running processes,
+# thereby allowing the user to easily get the PID of their Bash process.
+# Created by Esmael Mohamed
+# Disable shellcheck for the use of `ps` command (SC2009)
+# as per the requirements
+# shellcheck disable=SC2009
+ps aux | grep bash
+
