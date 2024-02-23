@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Display currently running processes
+# This Bash script displays a list of all currently running processes, including
+# those without a TTY, in a user-oriented format with process hierarchy.
+# Created by Esmael Mohamed
+
+# Using the ps command to list all processes in a user-oriented format with hierarchy
+ps auxf
+
