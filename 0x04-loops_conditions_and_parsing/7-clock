@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Initialize variables
+hour=0
+lines=0
+
+# Loop through hours
+while [ $hour -le 12 ]; do
+    minute=1
+    while [ $minute -le 59 ]; do
+        if [ $lines -lt 70 ]; then
+            echo "Hour: $hour"
+            echo "$minute"
+            lines=$((lines + 2))
+        else
+            exit
+        fi
+        minute=$((minute + 1))
+    done
+    hour=$((hour + 1))
+done
+
