@@ -1,0 +1,20 @@
+#!/bin/bash
+# Display listening ports and corresponding processes
+
+# Get listening ports
+listening_ports=$(netstat -tuln | grep 'LISTEN')
+
+# Loop through each listening port
+while IFS= read -r line; do
+    # Extract port number and protocol
+    port=$(echo "$line" | awk '{print $4}')
+    protocol=$(echo "$line" | awk '{print $1}')
+    
+    # Extract PID and process name using lsof
+    pid=$(lsof -i $protocol:$port | awk 'NR==2 {print $2}')
+    process_name=$(lsof -i $protocol:$port | awk 'NR==2 {print $1}')
+    
+    # Print port, PID, and process name
+    echo "Port: $port, Protocol: $protocol, PID: $pid, Process: $process_name"
+done <<< "$listening_ports"
+
