@@ -1,0 +1,8 @@
+#!/bin/bash
+# Get all active IPv4 addresses
+ip_addresses=$(ip -o -4 addr show | awk '$3 == "inet" {print $4}')
+
+# Print the active IPv4 addresses
+echo "Active IPv4 addresses:"
+echo "$ip_addresses"
+
