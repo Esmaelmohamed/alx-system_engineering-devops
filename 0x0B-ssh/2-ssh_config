@@ -1,0 +1,4 @@
+Host ubantu@172.17.0.8
+    IdentityFile ~/.ssh/school
+    PasswordAuthentication no
+
