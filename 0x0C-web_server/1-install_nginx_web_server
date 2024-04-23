@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Update package index
+apt-get update
+
+# Install nginx
+apt-get install -y nginx
+
+# Configure nginx to listen on port 80
+sed -i 's/^.*listen.*$/\tlisten 80;/g' /etc/nginx/sites-available/default
+
+# Restart nginx
+service nginx restart
+
+# Create a temporary HTML file with Hello World content
+echo "<html><body>Hello World!</body></html>" > /var/www/html/index.html
+
+# Verify nginx is running
+service nginx status
+
+# Verify nginx returns "Hello World!" when querying its root
+curl -s http://localhost | grep -q "Hello World!"
+if [ $? -eq 0 ]; then
+    echo "Nginx configured successfully. It returns 'Hello World!' when querying its root."
+else
+    echo "Nginx configuration failed. It does not return 'Hello World!' when querying its root."
+fi
