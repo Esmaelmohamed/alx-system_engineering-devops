@@ -1,31 +1,31 @@
 #!/usr/bin/env bash
-# This script restarts a specified process gracefully without using systemctl
+# This script configures a new Ubuntu machine by installing and setting up Nginx to serve a simple "Hello World" webpage.
 
-# Check if the process name is provided as an argument
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 PROCESS_NAME"
-    exit 1
-fi
+# Update package list and install Nginx
+echo -e "Updating and installing Nginx.\n"
+sudo apt-get update -y -qq && \
+	 sudo apt-get install nginx -y
 
-# Assign the process name from the argument
-PROCESS_NAME="$1"
+echo -e "\nSetting up some minor stuff.\n"
 
-# Check if the process is running
-if ! pgrep -x "$PROCESS_NAME" >/dev/null; then
-    echo "Error: Process '$PROCESS_NAME' is not running."
-    exit 1
-fi
+# Start Nginx service
+sudo service nginx start
 
-# Send the SIGTERM signal to gracefully stop the process
-killall -s TERM "$PROCESS_NAME"
+# Allow Nginx traffic through the firewall
+sudo ufw allow 'Nginx HTTP'
 
-# Wait for the process to stop
-while pgrep -x "$PROCESS_NAME" >/dev/null; do
-    sleep 1
-done
+# Give user ownership to website files for easy editing
+sudo chown -R "$USER":"$USER" /var/www/html
+sudo chmod -R 755 /var/www
 
-# Start the process again
-"$PROCESS_NAME" &
+# Backup default index file
+cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
 
-echo "Process '$PROCESS_NAME' restarted successfully."
+# Create new index file with "Hello World!" message
+echo -e "Hello World!" | dd status=none of=/var/www/html/index.nginx-debian.html
+
+# Restart Nginx
+sudo service nginx restart
+
+echo -e "\nCompleted.\n"
 
