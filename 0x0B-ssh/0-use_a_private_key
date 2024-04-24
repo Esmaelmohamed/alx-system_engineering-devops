@@ -1,4 +1,4 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+# connect ssh into web 
 ssh -i ~/.ssh/school 960c5c8bd169@172.17.0.8
 
