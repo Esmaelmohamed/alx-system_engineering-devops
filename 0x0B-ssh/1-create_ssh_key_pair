@@ -1,4 +1,9 @@
-#!/usr/bin/bash 
-# crerae RSA key pair 
+#!/usr/bin/env bash
+# The shebang line specifies that the script should be executed with the Bash interpreter
 
-ssh-keygen -b 4096 -f school -N betty 
+# Generates an RSA SSH key pair with the following options:
+# - '-f school': Specifies the filename for the key pair as "school"
+# - '-b 4096': Specifies the number of bits in the key to create as 4096
+# - '-N betty': Provides a passphrase "betty" for the key pair
+ssh-keygen -f school -b 4096 -N betty
+
