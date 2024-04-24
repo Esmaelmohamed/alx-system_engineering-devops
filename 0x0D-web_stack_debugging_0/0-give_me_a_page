@@ -2,7 +2,3 @@
 
 # Ensure Apache service is started
 sudo service apache2 start
-
-# Create a simple HTML page with the message
-echo "<html><body>Hello Holberton</body></html>" > /var/www/html/index.html
-
