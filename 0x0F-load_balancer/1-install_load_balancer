@@ -1,4 +1,5 @@
-cript to install and configure HAProxy on lb-01 server
+#!/usr/bin/env bash
+# Script to install and configure HAProxy on lb-01 server
 
 # Update package lists and install HAProxy
 sudo apt-get -y update
@@ -13,8 +14,8 @@ frontend besthor_frontend
 
 backend besthor_backend
     balance roundrobin
-    server STUDENT_ID-web-01 [web-01 IP]:80 check
-    server STUDENT_ID-web-02 [web-02 IP]:80 check
+    server eeb9365a5c0a-web-01 172.17.0.4:80 check
+    server eeb9365a5c0a-web-02 172.17.0.4:80 check
 EOF
 
 # Enable HAProxy to be managed via an init script
