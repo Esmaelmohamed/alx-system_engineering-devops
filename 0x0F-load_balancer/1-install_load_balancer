@@ -1,0 +1,25 @@
+cript to install and configure HAProxy on lb-01 server
+
+# Update package lists and install HAProxy
+sudo apt-get -y update
+sudo apt-get -y install haproxy
+
+# Configure HAProxy to send traffic to web-01 and web-02 servers using round-robin algorithm
+cat <<EOF | sudo tee -a /etc/haproxy/haproxy.cfg
+frontend besthor_frontend
+    bind *:80
+    mode http
+    default_backend besthor_backend
+
+backend besthor_backend
+    balance roundrobin
+    server STUDENT_ID-web-01 [web-01 IP]:80 check
+    server STUDENT_ID-web-02 [web-02 IP]:80 check
+EOF
+
+# Enable HAProxy to be managed via an init script
+echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
+
+# Restart HAProxy service
+sudo service haproxy restart
+
