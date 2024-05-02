@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Script to quickly restore the default server configuration for Nginx
+
+# Create a symbolic link to enable the default Nginx configuration
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+# Restart the Nginx service to apply the changes
+service nginx restart
+
+# Ensure Nginx restarts by killing the oldest Nginx process
+kill "$(pgrep 'nginx' | head -1)"
+
