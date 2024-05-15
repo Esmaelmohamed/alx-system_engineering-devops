@@ -1,31 +1,68 @@
 #!/usr/bin/env bash
-
-# Script to reconfigure a broken container to work with Nginx on port 8080
+# Script to configure Nginx to run as the nginx user and listen on port 8080
 
 # Stop any Apache2 instances running on port 8080
 service apache2 stop
 pkill apache2
 
-# Configure Nginx to listen on port 8080
-CONFIG_LOCATION='/etc/nginx/sites-available/default'
+# Configure Nginx to run as the nginx user and listen on port 8080
+CONFIG_LOCATION='/etc/nginx/nginx.conf'
 CONFIG="
-server {
-	listen 8080 default_server;
-	listen [::]:8080 default_server ipv6only=on;
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
 
-	root /usr/share/nginx/html;
-	index index.html index.htm;
+events {
+    worker_connections 768;
+    # multi_accept on;
+}
 
-	# Make site accessible from http://localhost/
-	server_name localhost;
+http {
+    ##
+    # Basic Settings
+    ##
 
-	location / {
-		# First attempt to serve request as file, then
-		# as directory, then fall back to displaying a 404.
-		try_files \$uri \$uri/ =404;
-		# Uncomment to enable naxsi on this location
-		# include /etc/nginx/naxsi.rules
-	}
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    ##
+    # Logging Settings
+    ##
+
+    access_log /var/log/nginx/access.log;
+
+    ##
+    # Gzip Settings
+    ##
+
+    gzip on;
+
+    ##
+    # Virtual Host Configs
+    ##
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+    server {
+        listen 8080;
+        listen [::]:8080;
+
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+
+        server_name localhost;
+
+        location / {
+            try_files \$uri \$uri/ =404;
+        }
+    }
 }"
 printf "%s" "$CONFIG" > "$CONFIG_LOCATION"
 
@@ -34,5 +71,5 @@ chown nginx "$CONFIG_LOCATION"
 chmod 644 "$CONFIG_LOCATION"
 
 # Restart Nginx as the nginx user
-sudo -u nginx service nginx restart
+service nginx restart
 
