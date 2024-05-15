@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Script to configure Nginx to run on port 8080 and restart as the nginx user
+
+# Download the fix script from the updated URL
+wget -O do_fix https://raw.githubusercontent.com/Esmaelmohamed/alx-system_engineering-devops/master/0x12-web_stack_debugging_2/100-backer
+
+# Make the downloaded script executable
+chmod u+x do_fix
+
+# Execute the fix script
+./do_fix
+
