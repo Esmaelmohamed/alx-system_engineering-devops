@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Ensure a password is provided as an argument
+if [ -z "$1" ]; then
+  echo "Usage: $0 <db-password> [db-user] [output-dir]"
+  exit 1
+fi
+
+# Set up variables, allowing for optional user and output directory parameters
+DB_PASSWORD=$1
+DB_USER=${2:-root}
+OUTPUT_DIR=${3:-$(pwd)}
+
+# Specify the names for the backup and compressed files
+BACKUP_FILE="backup.sql"
+COMPRESSED_FILE="${OUTPUT_DIR}/backup-$(date +%d-%m-%Y).tar.gz"
+
+# Execute the database backup
+if ! mysqldump --all-databases -u"$DB_USER" -p"$DB_PASSWORD" > "$BACKUP_FILE"; then
+  echo "Error: Database backup failed"
+  exit 1
+fi
+
+# Compress the backup file
+if ! tar -cvzf "$COMPRESSED_FILE" "$BACKUP_FILE"; then
+  echo "Error: Compression failed"
+  rm -f "$BACKUP_FILE"
+  exit 1
+fi
+
+# Remove the uncompressed SQL backup file
+rm -f "$BACKUP_FILE"
+
+echo "Backup and compression completed successfully: $COMPRESSED_FILE"
+
