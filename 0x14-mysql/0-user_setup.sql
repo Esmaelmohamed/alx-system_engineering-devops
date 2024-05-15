@@ -1,15 +1,8 @@
--- Create the replication user if it does not already exist
-CREATE USER IF NOT EXISTS 'replica_user'@'%' IDENTIFIED BY 'password';
+-- script to setup replica user on master sql server
 
--- Assign replication and select privileges to the user
+CREATE USER IF NOT EXISTS 'replica_user'@'%' IDENTIFIED BY 'password';
 GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'%';
 GRANT SELECT ON *.* TO 'replica_user'@'%';
 
--- Refresh the privilege table to ensure changes take effect
-FLUSH PRIVILEGES;
-
--- Verify the user and its privileges
-SELECT user, host, Repl_slave_priv, Select_priv 
-FROM mysql.user 
-WHERE user = 'replica_user';
-
+-- check that it was configured properly 
+SELECT user, Repl_slave_priv FROM mysql.user;
