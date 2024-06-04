@@ -1,39 +1,56 @@
 #!/usr/bin/python3
-"""Module for recursively fetching all hot posts of a subreddit"""
-
+"""
+Queries the Reddit API, parses the title of all hot articles, and prints a
+sorted count of given keywords.
+"""
 import requests
 
-def recurse(subreddit, hot_list=[], count=0, after=None):
+
+def count_words(subreddit, word_list, hot_list=[], viewed_count=0, after=''):
     """
-    Recursively queries the Reddit API to retrieve all hot posts of a given subreddit.
-    
+    Queries the Reddit API, parses the title of all hot articles, and prints a
+    sorted count of given keywords.
+
     Args:
         subreddit (str): The name of the subreddit.
-        hot_list (list): List to store the titles of hot posts.
-        count (int): Number of posts retrieved so far.
-        after (str): The fullname of the last post in the previous request.
+        word_list (list): List of keywords to count occurrences in the titles.
+        hot_list (list): List to store the titles of hot articles.
+        viewed_count (int): Number of articles viewed so far.
+        after (str): The token to get the next page of articles.
 
     Returns:
-        list: A list of titles of all hot posts, or None if the subreddit is invalid or an error occurs.
+        None
     """
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
-    headers = {"User-Agent": "custom-user-agent-for-subreddit-query"}
-    params = {"count": count, "after": after}
+    base = 'https://www.reddit.com/'
+    endpoint = 'r/{}/hot.json'.format(subreddit)
+    query_string = '?show="all"&limit=100&after={}&count={}'.format(
+        after, viewed_count)
+    url = base + endpoint + query_string
+    headers = {'User-Agent': 'Python/1.0(Holberton School 0x16 task 3)'}
+    response = requests.get(url, headers=headers)
+    if not response.ok:
+        return
 
-    try:
-        response = requests.get(url, headers=headers, params=params, allow_redirects=False)
-        if response.status_code != 200:
-            return None
+    data = response.json()['data']
+    for post in data['children']:
+        hot_list.append(post['data']['title'])
+    after = data['after']
+    dist = data['dist']
+    if after:
+        count_words(subreddit, word_list, hot_list, viewed_count + dist, after)
 
-        data = response.json().get("data", {})
-        children = data.get("children", [])
-        hot_list += [child.get("data", {}).get("title", "No Title") for child in children]
+    if viewed_count == 0:
+        result = {}
+        word_list = [word.lower() for word in word_list]
+        hot_words = ' '.join(hot_list).lower().split(' ')
+        for hot_word in hot_words:
+            for search_word in word_list:
+                if hot_word == search_word:
+                    result.setdefault(search_word, 0)
+                    result[search_word] += 1
 
-        after = data.get("after")
-        if after is None:
-            return hot_list
-
-        return recurse(subreddit, hot_list, count + len(children), after)
-    except requests.RequestException:
-        return None
+        for word, count in sorted(
+            sorted(result.items()), key=lambda x: x[1], reverse=True
+        ):
+            print("{}: {}".format(word, count))
 
