@@ -1,0 +1,38 @@
+server {
+    listen 80;
+    listen [::]:80 default_server;
+    
+    # Add a custom header to responses
+    add_header X-Served-By 2135-web-01;
+    
+    # Define the root directory for the server
+    root /var/www/html;
+    
+    # Set the default index files
+    index index.html index.htm;
+    
+    # Redirect requests to /redirect_me to a YouTube channel
+    location /redirect_me {
+        return 301 https://www.youtube.com/channel/UC-AUA4-ETXV4wLCSfy4tN5Q;
+    }
+    
+    # Server name configuration
+    server_name _;
+    
+    # Proxy requests to /airbnb-onepage to a Flask application
+    location /airbnb-onepage {
+        proxy_pass http://0.0.0.0:5000/airbnb-onepage;
+    }
+
+    # Serve static content from a specified directory
+    location /hbnb_static {
+        alias /data/web_static/current/;
+    }
+
+    # Default location block to handle requests
+    location / {
+        # Attempt to serve the file, if not found try directory, otherwise return 404
+        try_files $uri $uri/ =404;
+    }
+}
+
