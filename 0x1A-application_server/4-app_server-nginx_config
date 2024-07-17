@@ -1,102 +1,36 @@
-##
-# Refer to the following URLs for a comprehensive understanding
-# of Nginx configuration files to fully utilize Nginx's capabilities:
-# https://www.nginx.com/resources/wiki/start/
-# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
-# https://wiki.debian.org/Nginx/DirectoryStructure
-#
-# Typically, administrators will remove this file from sites-enabled/ and
-# keep it as a reference inside sites-available, where it will continue to be
-# updated by the Nginx packaging team.
-#
-# This file will automatically load configuration files provided by other
-# applications, such as Drupal or Wordpress, which will be made
-# available under a path with that package name, such as /drupal8.
-#
-# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
-##
-
-# Default server configuration
-#
 server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+        listen 80;
+        listen [::]:80;
+        add_header X-Served-By $HOSTNAME;
 
-    # Add a custom header to responses
-    add_header X-Served-By 2135-web-01;
+        server_name 35.175.126.203;
 
-    # Redirect requests to /redirect_me to a specified URL
-    location /redirect_me {
-        return 301 https://www.youtube.com/channel/UC-AUA4-ETXV4wLCSfy4tN5Q;
-    }
+        root /var/www/school;
+        index index.html;
 
-    # Define the root directory
-    root /var/www/html;
+        location = /airbnb-onepage/ {
+                proxy_pass http://127.0.0.1:5000/airbnb-onepage/;
+        }
 
-    # Set default index files
-    index index.html index.htm index.nginx-debian.html;
+        location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
+                proxy_pass http://127.0.0.1:5001/number_odd_or_even/$1;
+        }
 
-    # Default server name
-    server_name _;
+        location /api {
+                proxy_pass http://127.0.0.1:5002/api;
+        }
 
-    # Proxy requests to /airbnb-onepage to a Flask application
-    location /airbnb-onepage {
-        proxy_pass http://0.0.0.0:5000/airbnb-onepage;
-    }
+        location /redirect_me {
+            return 301 https://youtube.com;
+        }
 
-    # Proxy requests to /airbnb-dynamic/number_odd_or_even/<number>
-    location ~ ^/airbnb-dynamic/number_odd_or_even/([0-9]+)$ {
-        proxy_pass http://0.0.0.0:5001/number_odd_or_even/$1;
-    }
+        location /hbnb_static/ {
+            alias /data/web_static/current/;
+            index index.html 1-index.html;
+        }
 
-    # Proxy API requests to another service
-    location /api/ {
-        proxy_pass http://0.0.0.0:5002;
-    }
-
-    # Serve static content from a specific directory
-    location /hbnb_static {
-        alias /data/web_static/current/;
-    }
-
-    # Default location block to handle requests
-    location / {
-        # Attempt to serve the file, if not found try directory, otherwise return 404
-        try_files $uri $uri/ =404;
-    }
-
-    # Example configuration for passing PHP scripts to FastCGI server
-    # location ~ \.php$ {
-    #     include snippets/fastcgi-php.conf;
-    #
-    #     # With php-fpm (or other unix sockets):
-    #     fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
-    #     # With php-cgi (or other tcp sockets):
-    #     fastcgi_pass 127.0.0.1:9000;
-    # }
-
-    # Deny access to .htaccess files
-    # location ~ /\.ht {
-    #     deny all;
-    # }
+        error_page 404 /404.html;
+        location = /404.html {
+            root /var/www/school/errors/;
+        }
 }
-
-# Virtual Host configuration for example.com
-#
-# You can move this to a different file under sites-available/ and symlink it
-# to sites-enabled/ to enable it.
-#
-# server {
-#     listen 80;
-#     listen [::]:80;
-#
-#     server_name example.com;
-#
-#     root /var/www/example.com;
-#     index index.html;
-#
-#     location / {
-#         try_files $uri $uri/ =404;
-#     }
-# }
-
